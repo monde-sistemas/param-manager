@@ -11,6 +11,7 @@ It can be used with DataSets and [TMS Aurelius](http://www.tmssoftware.com/site/
 - Global, User, Company and User/Company scopes
 - Local, Remote and Session Persistence
 - Supports encrypted name/value params
+- Thread safe
 
 # Usage
 
@@ -54,3 +55,109 @@ To modify the value you can get the `TParamItem` object or use the default acess
   Value := GetParamManager.ParamByName('MyParamName').BlobAsString; 
 ```
 
+# Database (Remote) persistence
+
+Before using remote params you must config the remote persistence, it can be either using Datasets or TMS Aurelius. You can map the fields to your database schema in the `RemoteParamsClass` that you must implemente.
+
+Bellow an example of a recommended database schema:
+
+```SQL
+/* Firebird syntax */
+CREATE TABLE PARAM (
+    NAME        VARCHAR(30) NOT NULL,
+    VALUE       VARCHAR(1000),
+    COMPANY_ID  GUID,
+    USER_ID  GUID,
+    DATA       BLOB SUB_TYPE 0 SEGMENT SIZE 80
+);
+ALTER TABLE PARAM ADD CONSTRAINT UNQ_PARAM_NOME_EMPRESA_USUARIO UNIQUE (NAME, COMPANY_ID, USER_ID);
+```
+
+## DataSets
+
+To use the remote persistence with datasets, you must override the `TCustomDataSetParams` class and implement its `virtual; abstract;` methods to setup the fields for persistence. Then configure the `RemoteParamsClass` in the ParamManager instance.
+
+ **Note**: You must configure the RemoteParamsClass before registering any params, so it is recommended to add the unit in the top of the `.dpr` project file.
+
+Bellow an example implementation:
+
+```Delphi
+unit DataSetParams;
+
+interface
+
+uses
+  CustomDataSetParams,
+  ParamDataClient,
+  ParamManager,
+  Data.DB,
+  Datasnap.DBClient;
+
+type
+  TDataSetParams = class(TCustomDataSetParams)
+  private
+    FParams: TDmParamClient; // DataModule where the dataset is located
+  public
+    destructor Destroy; override;
+    function DataSet: TClientDataSet; override;
+    function CompanyField: TField; override;
+    function UserField: TField; override;
+    function BlobField: TBlobField; override;
+    function NameField: TField; override;
+    function ValueField: TField; override;
+    procedure Open; override;
+  end;
+
+implementation
+
+destructor TDataSetParams.Destroy;
+begin
+  FParams.Free;
+  inherited;
+end;
+
+function TDataSetParams.BlobField: TBlobField;
+begin
+  Result := FParams.cdsParamDATA;
+end;
+
+function TDataSetParams.CompanyField: TField;
+begin
+  Result := FParams.cdsParamCOMPANY_ID; // Required for company scoped params
+end;
+
+function TDataSetParams.DataSet: TClientDataSet;
+begin
+  Result := FParams.cdsParam;
+end;
+
+function TDataSetParams.NameField: TField;
+begin
+  Result := FParams.cdsParamNAME;
+end;
+
+procedure TDataSetParams.Open;
+begin
+  inherited;
+  if FParams = nil then
+    FParams := TDmParamClient.Create(nil);
+
+  FParams.cdsParam.Open;
+end;
+
+function TDataSetParams.UserField: TField;
+begin
+  Result := FParams.cdsParamUSER_ID; //Required for company scoped params
+end;
+
+function TDataSetParams.ValueField: TField;
+begin
+  Result := FParams.cdsParamVALUE;
+end;
+
+initialization
+  // Configures which class to use for persistence 
+  TParamManager.RemoteParamsClass := TDataSetParams;
+
+end.
+```
