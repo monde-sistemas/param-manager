@@ -40,7 +40,7 @@ end;
 
 class procedure TDefaultCipher.CheckKey;
 begin
-  if Key = '' then
+  if Key.IsEmpty then
     raise EParamManagerCipherKeyNotSet.CreateFmt(StrFmtDefaultCipherKeyNotSet, [Self.ClassName]);
 end;
 
