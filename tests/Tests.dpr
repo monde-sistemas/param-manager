@@ -22,7 +22,8 @@ uses
   CustomAureliusParamsTests in 'CustomAureliusParamsTests.pas',
   CustomAureliusParams in '..\aurelius\CustomAureliusParams.pas',
   ParamManagerThread in 'ParamManagerThread.pas',
-  LocalParamItemTests in 'LocalParamItemTests.pas';
+  LocalParamItemTests in 'LocalParamItemTests.pas',
+  DefaultCipherTests in 'DefaultCipherTests.pas';
 
 var
   runner : ITestRunner;
