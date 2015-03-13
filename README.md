@@ -55,6 +55,33 @@ To modify the value you can get the `TParamItem` object or use the default acess
   Value := GetParamManager.ParamByName('MyParamName').BlobAsString; 
 ```
 
+## Encripted params
+
+To encrypt the stored param key and value in the database or ini files, just register the param with the `peEncryptionOn` option:
+
+```Delphi
+  GetParamManager.RegisterParam('Encrypted', 'DefaultValue', ssGlobal, psRemote, peEncryptionOn);
+```
+
+The read/write to these params is transparent to the application so when you read its value in the application it will be returned unencrypted, use it like any other param.
+
+The stored encrypted param would look like this in an ini file:
+
+```Ini
+[Params]
+Çª®”¥‘³‹«›šš=Ü©®›¡
+```
+
+There is a `TDefaultCipher` class which implements a basic encryption algorithm, to use it, just configure the encryption key:
+
+```Delphi
+TDefaultCipher.Key := '{3B29BFAB-CC64-4963-B089-626640AA8EF2}'; // The key can be any string
+```
+
+If you want to use your own encryption algorithm, just implement a class decending from `TParamManagerCipher` and configure the Param Manager instance to use it, like this:
+
+`GetParamManager.Cipher := 'TMyCipherClass';`
+
 # Database (Remote) persistence
 
 Before using remote params you must config the remote persistence, it can be either using Datasets or TMS Aurelius. You can map the fields to your database schema in the `RemoteParamsClass` that you must implemente.

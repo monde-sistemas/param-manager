@@ -100,6 +100,7 @@
         <DCCReference Include="..\aurelius\CustomAureliusParams.pas"/>
         <DCCReference Include="ParamManagerThread.pas"/>
         <DCCReference Include="LocalParamItemTests.pas"/>
+        <DCCReference Include="DefaultCipherTests.pas"/>
         <None Include="..\README.md"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -2,6 +2,12 @@ unit ParamManagerCipher;
 
 interface
 
+uses
+  System.SysUtils;
+
+resourcestring
+  StrFmtDefaultCipherKeyNotSet = 'Encription key for %s not set. Set a key value before using encripted params.';
+
 type
   TParamManagerCipherClass = class of TParamManagerCipher;
 
@@ -12,11 +18,15 @@ type
   end;
 
   TDefaultCipher = class(TParamManagerCipher)
+  private
+    class procedure CheckKey;
   public
     class var Key: string;
     class function DecodeString(const Value: AnsiString): AnsiString; override;
     class function EncodeString(const Value: AnsiString): AnsiString; override;
   end;
+
+  EParamManagerCipherKeyNotSet = class(Exception);
 
 implementation
 
@@ -26,6 +36,12 @@ uses
 function Trans(Ch: AnsiChar; K: Byte): AnsiChar;
 begin
   Result := AnsiChar((256 + Ord(Ch) + K) mod 256);
+end;
+
+class procedure TDefaultCipher.CheckKey;
+begin
+  if Key = '' then
+    raise EParamManagerCipherKeyNotSet.CreateFmt(StrFmtDefaultCipherKeyNotSet, [Self.ClassName]);
 end;
 
 class function TDefaultCipher.DecodeString(const Value: AnsiString): AnsiString;
@@ -49,11 +65,11 @@ var
   end;
 
 begin
-  Assert(Key <> '');
+  CheckKey;
 
   GetMem(Tmp, Length(Value) + 1);
   try
-    StrPCopy(Tmp, Value);
+    AnsiStrings.StrPCopy(Tmp, Value);
     Decode(Key, Tmp, Length(Value));
     SetString(Result, Tmp, Length(Value));
   finally
@@ -82,11 +98,11 @@ var
   end;
 
 begin
-  Assert(Key <> '');
+  CheckKey;
 
   GetMem(Tmp, Length(Value) + 1);
   try
-    StrPCopy(Tmp, Value);
+    AnsiStrings.StrPCopy(Tmp, Value);
     Encode(Key, Tmp, Length(Value));
     SetString(Result, Tmp, Length(Value));
   finally
