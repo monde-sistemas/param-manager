@@ -11,7 +11,7 @@
 - [DunitX](https://github.com/VSoftTechnologies/DUnitX) 
 - [TMS Aurelius](https://www.tmssoftware.com/site/aurelius.asp)
 
-### Executing the tests
+## Executing the tests
 
 - Clone the DUnitX repository locally
 - Define a `DUNITX` environment variable, pointing to the DunitX clone directory.
