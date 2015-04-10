@@ -31,6 +31,38 @@ initialization
   GetParamManager.RegisterParam('MyUserSpecificParam', 'DefaultValue', ssUser, psRemote);
 ```
 
+### Scopes
+
+The param scope when register will dictate how the param values are separated between users or companies.
+
+**ssGlobal**
+
+Every user in every company can read and write it's value. In the database the param will be stored like this:
+```
+Name|User|Company|Value
+P1  |NULL|NULL   |A
+```
+**ssUser**
+
+This scope separates the values between users using the `GetParamManager.UserID` property value. So if `UserID = '1'` and you set a value to the param, this value will only be available when the `UserID` is `1`. In the database, the param will be stored like this:
+```
+Name|User|Company|Value
+P1  |1   |NULL   |B
+```
+**ssCompany**
+
+This scope separates the values between companies using the `GetParamManager.CompanyID` property value. So if `CompanyID = 'A'` and you set a value to the param, this value will only be available when the `CompanyID` is `A`. In the database, the param will be stored like this:
+```
+Name|User|Company|Value
+P1  |NULL|A      |B
+```
+**ssUserCompany**
+
+This scope separates the values between users and company using both the `GetParamManager.UserID` and `GetParamManager.CompanyID` properties. So if `UserID = '1'` and `CompanyID = 'A'` and you set a value to the param, this value will only be available the `UserID` is `1` and the `CompanyID is `A`.In the database, the param will be stored like this:
+```
+Name|User|CompanyID|Value
+P1  |1   |A        |B
+```
 ## Modify param value
 
 To modify the value you can get the `TParamItem` object or use the default acessor property, some examples:
