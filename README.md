@@ -35,6 +35,8 @@ initialization
 
 The param scope when register will dictate how the param values are separated between users or companies.
 
+**Note:** These scopes are only supported right now with the `psRemote` persistence, if you use `psLocal` or `psSession` the values will be stored like the `ssGlobal` scope in the Ini File or Session.
+
 **ssGlobal**
 
 The param value will be shared between any user in any company. In the database the param will be stored like this:
