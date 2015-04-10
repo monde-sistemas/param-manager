@@ -9,6 +9,7 @@ uses
   Aurelius.Engine.DatabaseManager;
 
 type
+  {$M+}
   [TestFixture]
   TCustomAureliusParamsTests = class(TObject)
   private
