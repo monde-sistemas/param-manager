@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{6488BE0A-4B48-47EC-8C13-696D2DA72F73}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Tests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Tests_Aurelius.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Tests">
+        <MSBuild Projects="Tests.dproj"/>
+    </Target>
+    <Target Name="Tests:Clean">
+        <MSBuild Projects="Tests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Tests:Make">
+        <MSBuild Projects="Tests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Tests_Aurelius">
+        <MSBuild Projects="Tests_Aurelius.dproj"/>
+    </Target>
+    <Target Name="Tests_Aurelius:Clean">
+        <MSBuild Projects="Tests_Aurelius.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Tests_Aurelius:Make">
+        <MSBuild Projects="Tests_Aurelius.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Tests;Tests_Aurelius"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Tests:Clean;Tests_Aurelius:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Tests:Make;Tests_Aurelius:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

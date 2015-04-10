@@ -46,7 +46,7 @@
         <VerInfo_Locale>1046</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UnitSearchPath>..\;$(DUnitX);$(AURELIUS)\core;$(AURELIUS)\drivers;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\;$(DUnitX);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_UsePackage>DBXInterBaseDriver;DataSnapServer;DataSnapCommon;DbxCommonDriver;dbxcds;CustomIPTransport;dsnap;IndyCore;IPIndyImpl;bindcompfmx;dbrtl;bindcomp;inetdb;xmlrtl;ibxpress;bindengine;soaprtl;aurelius;DBXInformixDriver;DBXFirebirdDriver;inet;DBXSybaseASADriver;dbexpress;fmx;IndySystem;DataSnapClient;DataSnapProviderClient;DBXOracleDriver;fmxase;inetdbxpress;rtl;DbxClientDriver;IndyProtocols;DBXMySQLDriver;fmxobj;fmxdae;DataSnapIndy10ServerTransport;$(DCC_UsePackage)</DCC_UsePackage>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
@@ -92,15 +92,11 @@
         <DCCReference Include="..\LocalParamItem.pas"/>
         <DCCReference Include="..\CustomDataSetParams.pas"/>
         <DCCReference Include="ParamManagerTests.pas"/>
-        <DCCReference Include="..\aurelius\ParamModel.pas"/>
-        <DCCReference Include="..\aurelius\AureliusParamItem.pas"/>
-        <DCCReference Include="AureliusParamItemTests.pas"/>
         <DCCReference Include="..\ParamManager.pas"/>
-        <DCCReference Include="CustomAureliusParamsTests.pas"/>
-        <DCCReference Include="..\aurelius\CustomAureliusParams.pas"/>
         <DCCReference Include="ParamManagerThread.pas"/>
         <DCCReference Include="LocalParamItemTests.pas"/>
         <DCCReference Include="DefaultCipherTests.pas"/>
+        <DCCReference Include="DUnitXTestRunner.pas"/>
         <None Include="..\README.md"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

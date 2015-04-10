@@ -12,6 +12,7 @@ uses
   ParamManager;
 
 type
+  {$M+}
   [TestFixture]
   TAureliusParamItemTests = class
   private
