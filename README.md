@@ -37,7 +37,7 @@ The param scope when register will dictate how the param values are separated be
 
 **ssGlobal**
 
-Every user in every company can read and write it's value. In the database the param will be stored like this:
+The param value will be shared between any user in any company. In the database the param will be stored like this:
 ```
 Name|User|Company|Value
 P1  |NULL|NULL   |A
