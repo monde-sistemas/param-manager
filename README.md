@@ -31,6 +31,57 @@ initialization
   GetParamManager.RegisterParam('MyUserSpecificParam', 'DefaultValue', ssUser, psRemote);
 ```
 
+### System Scopes
+
+The param scope when registered will dictate how the param values are separated between users or companies.
+
+The scopes are separated internally using the `UserID` and/or `CompanyID` property values, here's a code example of how these values affect the params, using a `ssUser` scope:
+
+```Delphi
+GetParamManager.RegisterParam('P1', 'Default', ssUser, psRemote);
+
+GetParamManager.UserID := '1'; // sets the current user
+GetParamManager['P1'] := 'New Value'; // sets the param value for User '1'
+Value := GetParamManager['P1']; // Value is 'New Value', since it was set for User '1'
+
+GetParamManager.UserID := '2'; // now we change the current user
+Value := GetParamManager['P1']; // Value is 'Default', since we didn't set it for User '2'
+```
+
+For company and user company params the logic is the same, but using the `CompanyID` property value alongside the `UserID` value.
+
+For more details please read the documentation of each system scope and the test cases.
+
+**Note:** These scopes are only supported right now with the `psRemote` persistence, if you use `psLocal` or `psSession` the values will be stored like the `ssGlobal` scope in the Ini File or Session.
+
+**ssGlobal**
+
+The param value will be shared between any user in any company. In the database the param will be stored like this:
+```
+Name|User|Company|Value
+P1  |NULL|NULL   |A
+```
+**ssUser**
+
+This scope separates the values between users using the `GetParamManager.UserID` property value. So if `UserID = '1'` and you set a value to the param, this value will only be available when the `UserID` is `1`. In the database, the param will be stored like this:
+```
+Name|User|Company|Value
+P1  |1   |NULL   |B
+```
+**ssCompany**
+
+This scope separates the values between companies using the `GetParamManager.CompanyID` property value. So if `CompanyID = 'A'` and you set a value to the param, this value will only be available when the `CompanyID` is `A`. In the database, the param will be stored like this:
+```
+Name|User|Company|Value
+P1  |NULL|A      |B
+```
+**ssUserCompany**
+
+This scope separates the values between users and company using both the `GetParamManager.UserID` and `GetParamManager.CompanyID` properties. So if `UserID = '1'` and `CompanyID = 'A'` and you set a value to the param, this value will only be available the `UserID` is `1` and the `CompanyID is `A`.In the database, the param will be stored like this:
+```
+Name|User|CompanyID|Value
+P1  |1   |A        |B
+```
 ## Modify param value
 
 To modify the value you can get the `TParamItem` object or use the default acessor property, some examples:
