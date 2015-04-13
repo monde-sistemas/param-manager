@@ -31,9 +31,26 @@ initialization
   GetParamManager.RegisterParam('MyUserSpecificParam', 'DefaultValue', ssUser, psRemote);
 ```
 
-### Scopes
+### System Scopes
 
-The param scope when register will dictate how the param values are separated between users or companies.
+The param scope when registered will dictate how the param values are separated between users or companies.
+
+The scopes are separated internally using the `UserID` and/or `CompanyID` property values, here's a code example of how these values affect the params, using a `ssUser` scope:
+
+```Delphi
+GetParamManager.RegisterParam('P1', 'Default', ssUser, psRemote);
+
+GetParamManager.UserID := '1'; // sets the current user
+GetParamManager['P1'] := 'New Value'; // sets the param value for User '1'
+Value := GetParamManager['P1']; // Value is 'New Value', since it was set for User '1'
+
+GetParamManager.UserID := '2'; // now we change the current user
+Value := GetParamManager['P1']; // Value is 'Default', since we didn't set it for User '2'
+```
+
+For company and user company params the logic is the same, but using the `CompanyID` property value alongside the `UserID` value.
+
+For more details please read the documentation of each system scope and the test cases.
 
 **Note:** These scopes are only supported right now with the `psRemote` persistence, if you use `psLocal` or `psSession` the values will be stored like the `ssGlobal` scope in the Ini File or Session.
 
