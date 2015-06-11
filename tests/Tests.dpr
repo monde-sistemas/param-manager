@@ -3,8 +3,6 @@ program Tests;
 {$APPTYPE CONSOLE}
 uses
   SysUtils,
-  Aurelius.Sql.SQLite,
-  Aurelius.Schema.SQLite,
   ParamManagerTestsData in 'ParamManagerTestsData.pas' {DmParamManagerTests: TDataModule},
   ReverseCipher in 'ReverseCipher.pas',
   LocalParamItem in '..\LocalParamItem.pas',
