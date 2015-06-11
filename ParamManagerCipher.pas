@@ -40,7 +40,7 @@ end;
 
 class procedure TDefaultCipher.CheckKey;
 begin
-  if Key.IsEmpty then
+  if Key = '' then
     raise EParamManagerCipherKeyNotSet.CreateFmt(StrFmtDefaultCipherKeyNotSet, [Self.ClassName]);
 end;
 
@@ -69,7 +69,7 @@ begin
 
   GetMem(Tmp, Length(Value) + 1);
   try
-    AnsiStrings.StrPCopy(Tmp, Value);
+    StrPCopy(Tmp, Value);
     Decode(Key, Tmp, Length(Value));
     SetString(Result, Tmp, Length(Value));
   finally
@@ -102,7 +102,7 @@ begin
 
   GetMem(Tmp, Length(Value) + 1);
   try
-    AnsiStrings.StrPCopy(Tmp, Value);
+    StrPCopy(Tmp, Value);
     Encode(Key, Tmp, Length(Value));
     SetString(Result, Tmp, Length(Value));
   finally
