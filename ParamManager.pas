@@ -82,6 +82,7 @@ type
     property SystemScope: TParamSystemScope read FSystemScope write FSystemScope;
     property Value: Variant read GetValue write SetValue;
     function ValueByCompany(CompanyID: Variant): Variant;
+    procedure SetValueByCompany(CompanyID: Variant; Value: Variant);
     property DefaultValue: Variant read FDefaultValue write FDefaultValue;
     property AsInteger: Integer read GetAsInteger write SetAsInteger;
     property BlobAsString: string read GetBlobAsString write SetBlobAsString;
@@ -366,6 +367,24 @@ begin
       end;
       peEncryptionOff:
         CustomSetValue(ParamName, FValue);
+    end;
+  finally
+    TMonitor.Exit(ParamManager);
+  end;
+end;
+
+procedure TParamItem.SetValueByCompany(CompanyID, Value: Variant);
+var
+  OldCompanyID: Variant;
+begin
+  TMonitor.Enter(ParamManager);
+  try
+    OldCompanyID := ParamManager.CompanyID;
+    ParamManager.CompanyID := CompanyID;
+    try
+      SetValue(Value);
+    finally
+      ParamManager.CompanyID := OldCompanyID;
     end;
   finally
     TMonitor.Exit(ParamManager);
