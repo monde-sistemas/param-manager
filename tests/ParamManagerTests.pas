@@ -32,8 +32,11 @@ type
     procedure AppDataFolder_FolderDoesNotExists_FolderCreatedWhenPropertyRead;
     procedure DataSalvandoComoInteiro;
     procedure EncriptedParam;
-    procedure ValueByCompany_LoggedOnAnotherCompany_CorrectValueReturner;
+    procedure ValueByCompany_LoggedOnAnotherCompany_CorrectValueReturned;
+    procedure BlobAsStringByCompany_LoggedOnAnotherCompany_CorrectValueReturned;
+    procedure BlobAsString_DefaultValueNull_EmptyStringReturned;
     procedure SetValueByCompany_OtherCompany_CorrectValueSet;
+    procedure SetBlobAsStringByCompany_OtherCompany_CorrectValueSet;
     procedure GetSetParamValue_CustomizedCipher_EncryptedStoredValues;
     procedure GetSetParamValue_EncriptedParamWithDefaultValue_DefaultReturned;
     procedure TestCompanyRemoteParam;
@@ -157,7 +160,7 @@ begin
   Assert.AreEqual('Îx”„t’'#$008D'•', ParamData.cdsVALOR.AsString);
 end;
 
-procedure TParamManagerTests.ValueByCompany_LoggedOnAnotherCompany_CorrectValueReturner;
+procedure TParamManagerTests.ValueByCompany_LoggedOnAnotherCompany_CorrectValueReturned;
 const
   Param = 'Param';
   Company1 = 1;
@@ -359,6 +362,35 @@ begin
     end, EAssertionFailed);
 end;
 
+procedure TParamManagerTests.BlobAsStringByCompany_LoggedOnAnotherCompany_CorrectValueReturned;
+const
+  Param = 'Param';
+  Company1 = 'Company1';
+  Company2 = 'Company2';
+  Value1 = 'Value1';
+  Value2 = 'Value2';
+begin
+  FSUT.RegisterParam(Param, DefaultValue, ssCompany, psRemote);
+
+  FSUT.CompanyID := Company1;
+  FSUT.ParamByName(Param).BlobAsString := Value1;
+
+  FSUT.CompanyID := Company2;
+  FSUT.ParamByName(Param).BlobAsString := Value2;
+
+  FSUT.CompanyID := Company1;
+  Assert.AreEqual<string>(Value1, FSUT.ParamByName(Param).BlobAsStringByCompany(Company1), 'Invalid Company1 value');
+  Assert.AreEqual<string>(Value2, FSUT.ParamByName(Param).BlobAsStringByCompany(Company2), 'Invalid Company2 value');
+end;
+
+procedure TParamManagerTests.BlobAsString_DefaultValueNull_EmptyStringReturned;
+begin
+  FSUT.RegisterParam('Param', Null, ssCompany, psRemote);
+  FSUT.CompanyID := 'Company1';
+
+  Assert.IsEmpty(FSUT.ParamByName('Param').BlobAsString);
+end;
+
 procedure TParamManagerTests.BlobAsString_ParamNotInDataSet_ValueSet;
 begin
   FSUT.RegisterParam('Blob', '', ssGlobal, psRemote, peEncryptionOff);
@@ -388,6 +420,23 @@ begin
   Assert.AreEqual('Blob', ParamData.cdsNOME.AsString, 'ParamName not set in dataset');
   Assert.IsTrue(ParamData.cdsDADOS.IsNull, 'Value not cleared in dataset');
   Assert.AreEqual('', FSUT.ParamByName('Blob').BlobAsString, 'BlobAsString should return a blank string');
+end;
+
+procedure TParamManagerTests.SetBlobAsStringByCompany_OtherCompany_CorrectValueSet;
+const
+  Param = 'Parametro';
+  Company1 = 'Company1';
+  Company2 = 'Company2';
+  Value1 = 'Value1';
+  Value2 = 'Value2';
+begin
+  FSUT.RegisterParam(Param, DefaultValue, ssCompany, psRemote);
+
+  FSUT.CompanyID := Company1;
+  FSUT.ParamByName(Param).SetBlobAsStringByCompany(Company2, Value2);
+
+  FSUT.CompanyID := Company2;
+  Assert.AreEqual<string>(Value2, FSUT.ParamByName(Param).BlobAsString);
 end;
 
 procedure TParamManagerTests.SetBlobAsString_WithMultipleThreads_ShouldSaveTheCorrectValues;
