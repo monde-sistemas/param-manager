@@ -20,8 +20,8 @@ type
   protected
     procedure CustomSetValue(const ParamName: string; Value: Variant); override;
     function CustomGetValue(const ParamName: string; CompanyID: Variant): Variant; override;
-    function CustomGetBlobAsString: string; override;
-    procedure CustomSetBlobAsString(const Value: string); override;
+    function CustomGetBlobAsString(CompanyID: Variant): string; override;
+    procedure CustomSetBlobAsString(CompanyID: Variant; const Value: string); override;
   public
     procedure SaveToStream(Stream: TStream); override;
     procedure LoadFromStream(Stream: TStream); override;
@@ -63,15 +63,15 @@ begin
   Assert(Result <> nil);
 end;
 
-function TDataSetParamItem.CustomGetBlobAsString: string;
+function TDataSetParamItem.CustomGetBlobAsString(CompanyID: Variant): string;
 begin
   Assert(Encryption = peEncryptionOff);
 
   FDataSetParams.Open;
-  if LocalizarParametroEmDataSet then
+  if LocalizarParametroEmDataSet(ParamName, CompanyID) then
     Result := FDataSetParams.BlobField.AsString
   else
-    Result := DefaultValue;
+    Result := VarToStr(DefaultValue);
 end;
 
 function TDataSetParamItem.CustomGetValue(const ParamName: string; CompanyID: Variant): Variant;
@@ -168,10 +168,10 @@ begin
   DataSet.Post;
 end;
 
-procedure TDataSetParamItem.CustomSetBlobAsString(const Value: string);
+procedure TDataSetParamItem.CustomSetBlobAsString(CompanyID: Variant; const Value: string);
 begin
   FDataSetParams.Open;
-  InsertOrEdit(ParamName, ParamManager.CompanyID);
+  InsertOrEdit(ParamName, CompanyID);
   FDataSetParams.BlobField.AsString := Value;
   DataSet.Post;
 end;

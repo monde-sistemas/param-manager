@@ -70,10 +70,10 @@ type
     FValue: Variant;
     function DecodeString(const Value: string): string;
     function EncodeString(const Value: string): string;
-    function CustomGetBlobAsString: string; virtual;
+    function CustomGetBlobAsString(CompanyID: Variant): string; virtual;
     function CustomGetValue(const ParamName: string; CompanyID: Variant): Variant; virtual;
     procedure CustomSetValue(const ParamName: string; Value: Variant); virtual;
-    procedure CustomSetBlobAsString(const Value: string); virtual;
+    procedure CustomSetBlobAsString(CompanyID: Variant; const Value: string); virtual;
   public
     constructor Create(ParamManager: TParamManager); virtual;
     property Encryption: TParamEncryption read FEncryption write FEncryption;
@@ -82,7 +82,9 @@ type
     property SystemScope: TParamSystemScope read FSystemScope write FSystemScope;
     property Value: Variant read GetValue write SetValue;
     function ValueByCompany(CompanyID: Variant): Variant;
+    function BlobAsStringByCompany(CompanyID: Variant): string;
     procedure SetValueByCompany(CompanyID: Variant; Value: Variant);
+    procedure SetBlobAsStringByCompany(CompanyID, Value: Variant);
     property DefaultValue: Variant read FDefaultValue write FDefaultValue;
     property AsInteger: Integer read GetAsInteger write SetAsInteger;
     property BlobAsString: string read GetBlobAsString write SetBlobAsString;
@@ -260,6 +262,16 @@ procedure TCustomRemoteParams.Refresh;
 begin
 end;
 
+function TParamItem.BlobAsStringByCompany(CompanyID: Variant): string;
+begin
+  TMonitor.Enter(ParamManager);
+  try
+    Result := CustomGetBlobAsString(CompanyID)
+  finally
+    TMonitor.Exit(ParamManager);
+  end;
+end;
+
 constructor TParamItem.Create(ParamManager: TParamManager);
 begin
   FParamManager := ParamManager;
@@ -285,7 +297,7 @@ function TParamItem.GetBlobAsString: string;
 begin
   TMonitor.Enter(ParamManager);
   try
-    Result := CustomGetBlobAsString;
+    Result := CustomGetBlobAsString(FParamManager.CompanyID);
   finally
     TMonitor.Exit(ParamManager);
   end;
@@ -301,11 +313,11 @@ begin
   end;
 end;
 
-procedure TParamItem.CustomSetBlobAsString(const Value: string);
+procedure TParamItem.CustomSetBlobAsString(CompanyID: Variant; const Value: string);
 begin
 end;
 
-function TParamItem.CustomGetBlobAsString: string;
+function TParamItem.CustomGetBlobAsString(CompanyID: Variant): string;
 begin
 end;
 
@@ -342,7 +354,17 @@ procedure TParamItem.SetBlobAsString(const Value: string);
 begin
   TMonitor.Enter(ParamManager);
   try
-    CustomSetBlobAsString(Value);
+    CustomSetBlobAsString(FParamManager.CompanyID, Value);
+  finally
+    TMonitor.Exit(ParamManager);
+  end;
+end;
+
+procedure TParamItem.SetBlobAsStringByCompany(CompanyID, Value: Variant);
+begin
+  TMonitor.Enter(ParamManager);
+  try
+    CustomSetBlobAsString(CompanyID, Value);
   finally
     TMonitor.Exit(ParamManager);
   end;
